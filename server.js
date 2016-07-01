@@ -2,6 +2,9 @@ var net = require('net');
 
 var CONFIG = require('./config');
 
+var input = process.stdin;
+input.setEncoding('utf8');
+
 var sockets = [];
 var namesArr = [];
 
@@ -68,4 +71,10 @@ server.listen(CONFIG.PORT, CONFIG.HOST, function () {
 
 server.on('error', function (err) {
   console.error(err);
+});
+
+input.on('data', function (data) {
+  for (var i = 0; i < sockets.length; i++) {
+    sockets[i].write('[ADMIN]: ' + data);
+  }
 });
