@@ -43,7 +43,7 @@ var server = net.createServer(function (socket) {
       }
     } else {
       for (var i = 0; i < sockets.length; i++) {
-        sockets[i].write(socketID + ': "' + data + '"');
+        sockets[i].write(socketID.toString().trim() + ': "' + data.toString().trim() + '"');
       }
     }
   });
@@ -56,8 +56,8 @@ var server = net.createServer(function (socket) {
     namesArr.splice(leaverID, 1);
     console.log(namesArr.length);
 
-    for (var i = 0; i < sockets.length; i++) {
-      sockets[i].write(socketID + ' is a dirty leaver.');
+    for (var i = 0; i < namesArr.length; i++) {
+      sockets[i].write(username.toString().trim() + ' is a dirty leaver.');
     }
 
   });
@@ -74,7 +74,11 @@ server.on('error', function (err) {
 });
 
 input.on('data', function (data) {
-  for (var i = 0; i < sockets.length; i++) {
-    sockets[i].write('[ADMIN]: ' + data);
+  for (var i = 0; i < namesArr.length; i++) {
+    if (data.toString().trim() === ('\\kick ' + namesArr[i].toString().trim())) {
+      sockets[i].destroy();
+    } else {
+      sockets[i].write('[ADMIN]: ' + data);
+    }
   }
 });
