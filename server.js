@@ -10,7 +10,7 @@ var namesArr = [];
 
 var server = net.createServer(function (socket) {
   sockets.push(socket);
-  var socketID = socket.remoteAddress + ':' + socket.remotePort;
+  var socketID = socket.remoteAddress.toString().trim() + ':' + socket.remotePort.toString().trim();
   var username;
   console.log('CONNECTED: ' + socketID);
   socket.setEncoding('utf8');
@@ -43,7 +43,7 @@ var server = net.createServer(function (socket) {
       }
     } else {
       for (var i = 0; i < sockets.length; i++) {
-        sockets[i].write(socketID.toString().trim() + ': "' + data.toString().trim() + '"');
+        sockets[i].write(username.toString().trim() + ': "' + data.toString().trim() + '"');
       }
     }
   });
@@ -75,7 +75,9 @@ server.on('error', function (err) {
 
 input.on('data', function (data) {
   for (var i = 0; i < namesArr.length; i++) {
-    if (data.toString().trim() === ('\\kick ' + namesArr[i].toString().trim())) {
+    if (data.toString() === ('\\kick ' + namesArr[i].toString()) ||
+    data.toString().trim() === (sockets[i].remoteAddress.toString().trim() + ':' + sockets[i].remotePort.toString().trim())) {
+      console.log(sockets[i].remoteAddress.toString() + ':' + sockets[i].remotePort.toString());
       sockets[i].destroy();
     } else {
       sockets[i].write('[ADMIN]: ' + data);
